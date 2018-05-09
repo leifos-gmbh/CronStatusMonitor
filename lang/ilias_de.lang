@@ -1,0 +1,4 @@
+cron_description#:#Prüft ob ein Cron Job abgestürzt ist und informiert die ausgewählten Benutzer darüber per Mail
+gui_title#:#Einstellungen
+email_recipient#:#Empfänger der Nachricht
+email_recipient_info#:#Komma-separierte Liste von Benutzeraccounts

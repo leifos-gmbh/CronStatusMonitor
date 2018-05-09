@@ -1,0 +1,4 @@
+cron_description#:#Checks if a cron job crashed and sends a mail to the selected users with this information
+gui_title#:#Settings
+email_recipient#:#Recipients of the message
+email_recipient_info#:#Comma separated list of account logins
