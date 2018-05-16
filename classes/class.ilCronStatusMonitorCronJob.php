@@ -85,27 +85,25 @@ class ilCronStatusMonitorCronJob extends ilCronJob
         $new_crashed_jobs = array();
 
         // Get cron-jobs, which had the status "crashed" on the last run of this cron-job (empty result on first run)
-        $result = $ilDB->queryF("SELECT job_id, job_result_status FROM crn_sts_mtr WHERE job_result_status = %s",
-            array("integer"),
-            array(4));
+        $result = $ilDB->query("SELECT job_id, ts FROM crn_sts_mtr");
         if ($ilDB->numRows($result) > 0) {
             while ($row = $ilDB->fetchAssoc($result)) {
-                $old_crashed_jobs[$row["job_id"]] = $row["job_result_status"];
+                $old_crashed_jobs[$row["job_id"]] = $row["ts"];
             }
 
         }
 
         // Get cron-jobs, which have the status "crashed" on the current run of this cron-job
-        $result = $ilDB->queryF("SELECT job_id, job_result_status FROM cron_job WHERE job_result_status = %s",
+        $result = $ilDB->queryF("SELECT job_id, job_result_status, job_result_ts FROM cron_job WHERE job_result_status = %s",
             array("integer"),
             array(4));
         if ($ilDB->numRows($result) > 0) {
             while ($row = $ilDB->fetchAssoc($result)) {
-                $new_crashed_jobs[$row["job_id"]] = $row["job_result_status"];
+                $new_crashed_jobs[$row["job_id"]] = $row["job_result_ts"];
             }
 
         } else {
-            //no further processing if no cron-jobs have the status "crashed"
+            // No further processing if no cron-jobs have the status "crashed"
             $ilDB->manipulate("DELETE FROM crn_sts_mtr");
             return;
         }
@@ -114,13 +112,24 @@ class ilCronStatusMonitorCronJob extends ilCronJob
 
         // Convert the "new" crashed cron-jobs into "old" crashed cron-jobs for the next run of this cron-job
         foreach ($new_crashed_jobs as $key => $job) {
-            $ilDB->manipulateF("INSERT INTO crn_sts_mtr (job_id, job_result_status) VALUES ".
+            $ilDB->manipulateF("INSERT INTO crn_sts_mtr (job_id, ts) VALUES ".
                 " (%s,%s)",
                 array("text", "integer"),
                 array($key, $job));
         }
-        // Compare the actual crashed cron-jobs with the crashed cron-jobs from the last run to check which cron-jobs crashed since the last run
+
+        /*
+        Compare the actual crashed cron-jobs with the crashed cron-jobs from the last run to check which new cron-jobs crashed since the last run.
+        Check also if crashed cron-jobs, which have been reset since the last run,
+        crashed again in the period between the last run and the actual run of this cron-job.
+        */
         $crashed_jobs = array_diff_assoc($new_crashed_jobs,$old_crashed_jobs);
+
+
+        // No further processing if no new cron-jobs crashed
+        if (empty($crashed_jobs)) {
+            return;
+        }
 
         return $crashed_jobs;
     }
@@ -134,11 +143,11 @@ class ilCronStatusMonitorCronJob extends ilCronJob
     public function composeAndSendMail(array $crashed_jobs)
     {
         $crashed_jobs_string = implode(",", array_keys($crashed_jobs));
-        $message = "Folgende Cron-Jobs sind abgestürzt: " . $crashed_jobs_string; //currently static, must be changed to language placeholders
+        $message = "Folgende Cron-Jobs sind abgestürzt: " . $crashed_jobs_string; // Currently static, must be changed to language placeholders
 
         include_once "./Services/Notification/classes/class.ilSystemNotification.php";
         $ntf = new ilSystemNotification();
-        $ntf->setSubjectLangId("Information über abgestürzte Cron-Jobs"); //currently static, must be changed to language placeholders
+        $ntf->setSubjectLangId("Information über abgestürzte Cron-Jobs"); // Currently static, must be changed to language placeholders
         $ntf->setIntroductionLangId($message);
 
         include_once("./Customizing/global/plugins/Services/Cron/CronHook/CronStatusMonitor/classes/class.ilCronStatusMonitorSettings.php");

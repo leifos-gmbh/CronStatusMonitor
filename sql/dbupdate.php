@@ -9,11 +9,11 @@ if (!$ilDB->tableExists('crn_sts_mtr'))
             'length' => 50,
             'notnull' => true
         ),
-        'job_result_status' => array(
+        'ts' => array(
             'type' => 'integer',
-            'length' => 1,
+            'length' => 4,
             'notnull' => false
-        ),
+        )
     ));
     $ilDB->addPrimaryKey('crn_sts_mtr',array('job_id'));
 }
