@@ -9,6 +9,12 @@ include_once "Services/Cron/classes/class.ilCronJob.php";
  */
 class ilCronStatusMonitorCronJob extends ilCronJob
 {
+    protected $plugin;
+
+    function __construct($plugin)
+    {
+        $this->plugin = $plugin;
+    }
 
     public function getId()
     {
@@ -142,24 +148,38 @@ class ilCronStatusMonitorCronJob extends ilCronJob
      */
     public function composeAndSendMail(array $crashed_jobs)
     {
-        $crashed_jobs_string = implode(",", array_keys($crashed_jobs));
-        $message = "Folgende Cron-Jobs sind abgestürzt: " . $crashed_jobs_string; // Currently static, must be changed to language placeholders
-
-        include_once "./Services/Notification/classes/class.ilSystemNotification.php";
-        $ntf = new ilSystemNotification();
-        $ntf->setSubjectLangId("Information über abgestürzte Cron-Jobs"); // Currently static, must be changed to language placeholders
-        $ntf->setIntroductionLangId($message);
+        $sender = ilObjUser::_lookupId("anonymous");
+        $subject = $this->plugin->txt("email_subject");
+        $crashed_jobs_string = implode(", ", array_keys($crashed_jobs));
+        $message = $this->plugin->txt("email_message") . ": " . $crashed_jobs_string;
 
         include_once("./Customizing/global/plugins/Services/Cron/CronHook/CronStatusMonitor/classes/class.ilCronStatusMonitorSettings.php");
         $setting = new ilCronStatusMonitorSettings();
-        $string = $setting->get("email_recipient");
-        $parts = explode(',', $string);
-        $users = array();
-        foreach ($parts as $p)
+        $users = $setting->get("email_recipient");
+
+        /**
+         * In case of using ilSystemNotification to get recipients
+         *
+        $users_parts = explode(',', $users);
+        $users_ids = array();
+        foreach ($users_parts as $p)
         {
-            $users[] = ilObjUser::_lookupId($p);
+        $users_ids[] = ilObjUser::_lookupId($p);
         }
-        $ntf->sendMail($users);
+         */
+
+        include_once "./Services/Notification/classes/class.ilMail.php";
+        $ntf = new ilMail($sender);
+        $ntf->sendMail(
+            $users,
+            "",
+            "",
+            $subject,
+            $message,
+            false,
+            array("system")
+        );
+
     }
 
 }

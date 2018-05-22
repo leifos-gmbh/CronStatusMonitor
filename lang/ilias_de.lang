@@ -2,3 +2,5 @@ cron_description#:#Prüft ob ein Cron Job abgestürzt ist und informiert die aus
 gui_title#:#Einstellungen
 email_recipient#:#Empfänger der Nachricht
 email_recipient_info#:#Komma-separierte Liste von Benutzeraccounts
+email_message#:#Folgende Cron-Jobs sind abgestürzt
+email_subject#:#Information über abgestürzte Cron-Jobs

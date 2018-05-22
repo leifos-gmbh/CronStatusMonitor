@@ -44,14 +44,14 @@ class ilCronStatusMonitorPlugin extends ilCronHookPlugin
     function getCronJobInstances()
     {
         include_once "class.ilCronStatusMonitorCronJob.php";
-        $job = new ilCronStatusMonitorCronJob();
+        $job = new ilCronStatusMonitorCronJob($this);
         return array($job);
     }
 
     function getCronJobInstance($a_job_id)
     {
         include_once "class.ilCronStatusMonitorCronJob.php";
-        return new ilCronStatusMonitorCronJob();
+        return new ilCronStatusMonitorCronJob($this);
     }
 
     /**
