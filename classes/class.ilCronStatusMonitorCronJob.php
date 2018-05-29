@@ -168,7 +168,7 @@ class ilCronStatusMonitorCronJob extends ilCronJob
         }
          */
 
-        include_once "./Services/Notification/classes/class.ilMail.php";
+        include_once "./Services/Mail/classes/class.ilMail.php";
         $ntf = new ilMail($sender);
         $ntf->sendMail(
             $users,
