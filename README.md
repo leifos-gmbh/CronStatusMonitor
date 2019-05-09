@@ -13,7 +13,7 @@ CronStatusMonitor is a cron-job plugin to identify if active cron-jobs crashed a
 
 ### Quick Installation Guide
 
-1. Copy the content of this folder in <ILIAS_directory>/Customizing/global/plugins/Services/Cron/Cronhook/CronStatusMonitor
+1. Copy the content of this folder in <ILIAS_directory>/Customizing/global/plugins/Services/Cron/CronHook/CronStatusMonitor
 
 2. Access to ILIAS and go to the administration page.
 
