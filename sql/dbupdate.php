@@ -1,8 +1,7 @@
 <#1>
 <?php
 
-if (!$ilDB->tableExists('crn_sts_mtr'))
-{
+if (!$ilDB->tableExists('crn_sts_mtr')) {
     $ilDB->createTable('crn_sts_mtr', array(
         'job_id' => array(
             'type' => 'text',
@@ -15,7 +14,7 @@ if (!$ilDB->tableExists('crn_sts_mtr'))
             'notnull' => false
         )
     ));
-    $ilDB->addPrimaryKey('crn_sts_mtr',array('job_id'));
+    $ilDB->addPrimaryKey('crn_sts_mtr', array('job_id'));
 }
 
 ?>
@@ -23,8 +22,7 @@ if (!$ilDB->tableExists('crn_sts_mtr'))
 <#2>
 <?php
 
-if (!$ilDB->tableExists('crn_sts_mtr_settings'))
-{
+if (!$ilDB->tableExists('crn_sts_mtr_settings')) {
     $ilDB->createTable('crn_sts_mtr_settings', array(
         'keyword' => array(
             'type' => 'text',
@@ -36,7 +34,7 @@ if (!$ilDB->tableExists('crn_sts_mtr_settings'))
             'notnull' => false
         ),
     ));
-    $ilDB->addPrimaryKey('crn_sts_mtr_settings',array('keyword'));
+    $ilDB->addPrimaryKey('crn_sts_mtr_settings', array('keyword'));
 }
 
 ?>

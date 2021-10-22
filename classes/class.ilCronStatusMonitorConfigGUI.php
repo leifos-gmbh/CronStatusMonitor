@@ -1,5 +1,21 @@
 <?php
-/* Copyright (c) 1998-2018 ILIAS open source, Extended GPL, see docs/LICENSE */
+
+/**
+ * This file is part of ILIAS, a powerful learning management system
+ * published by ILIAS open source e-Learning e.V.
+ *
+ * ILIAS is licensed with the GPL-3.0,
+ * see https://www.gnu.org/licenses/gpl-3.0.en.html
+ * You should have received a copy of said license along with the
+ * source code, too.
+ *
+ * If this is not the case or you just want to try ILIAS, you'll find
+ * us at:
+ * https://www.ilias.de
+ * https://github.com/ILIAS-eLearning
+ *
+ ********************************************************************
+ */
 
 include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
 
@@ -10,14 +26,13 @@ include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
 class ilCronStatusMonitorConfigGUI extends ilPluginConfigGUI
 {
     /**
-     * @param $cmd
+     * @param string $cmd
      *
-     * Handles all commmands, default is "configure"
+     * Handles all commands, default is "configure"
      */
-    function performCommand($cmd)
+    public function performCommand($cmd) : void
     {
-        switch ($cmd)
-        {
+        switch ($cmd) {
             default:
                 $this->$cmd();
                 break;
@@ -25,26 +40,18 @@ class ilCronStatusMonitorConfigGUI extends ilPluginConfigGUI
     }
 
     /**
-     * @param ilPropertyFormGUI|null $form
-     *
      * Show settings screen
      */
-    function configure(ilPropertyFormGUI $form = null)
+    public function configure(?ilPropertyFormGUI $form = null) : void
     {
         global $tpl;
-        if(!$form instanceof ilPropertyFormGUI)
-        {
+        if (!$form instanceof ilPropertyFormGUI) {
             $form = $this->initConfigurationForm();
         }
         $tpl->setContent($form->getHTML());
     }
 
-    /**
-     * @return ilPropertyFormGUI
-     *
-     * Init configuration form
-     */
-    function initConfigurationForm()
+    public function initConfigurationForm() : ilPropertyFormGUI
     {
         global $ilCtrl, $lng;
 
@@ -60,7 +67,7 @@ class ilCronStatusMonitorConfigGUI extends ilPluginConfigGUI
         //text input
         include_once("./Customizing/global/plugins/Services/Cron/CronHook/CronStatusMonitor/classes/class.ilCronStatusMonitorSettings.php");
         $setting = new ilCronStatusMonitorSettings();
-        $text = new ilTextInputGUI($this->getPluginObject()->txt("email_recipient"),"email_recipient");
+        $text = new ilTextInputGUI($this->getPluginObject()->txt("email_recipient"), "email_recipient");
         $text->setValue($setting->get("email_recipient"));
         $text->setInfo($this->getPluginObject()->txt("email_recipient_info"));
         $text->setRequired(true);
@@ -69,25 +76,20 @@ class ilCronStatusMonitorConfigGUI extends ilPluginConfigGUI
         return $form;
     }
 
-    /**
-     * Save settings
-     */
-    function save()
+    public function save() : void
     {
         global $lng, $ilCtrl;
         $form = $this->initConfigurationForm();
 
-        if ($form->checkInput())
-        {
+        if ($form->checkInput()) {
             include_once("./Customizing/global/plugins/Services/Cron/CronHook/CronStatusMonitor/classes/class.ilCronStatusMonitorSettings.php");
             $setting = new ilCronStatusMonitorSettings();
             $setting->setList($form->getInput("email_recipient"));
-            ilUtil::sendSuccess($lng->txt("settings_saved"),true);
-            $ilCtrl->redirect($this,"configure");
+            ilUtil::sendSuccess($lng->txt("settings_saved"), true);
+            $ilCtrl->redirect($this, "configure");
         }
 
         //$form->setValuesByPost();
         $this->configure($form);
     }
-
 }

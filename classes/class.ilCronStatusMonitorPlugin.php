@@ -1,5 +1,21 @@
 <?php
-/* Copyright (c) 1998-2018 ILIAS open source, Extended GPL, see docs/LICENSE */
+
+/**
+ * This file is part of ILIAS, a powerful learning management system
+ * published by ILIAS open source e-Learning e.V.
+ *
+ * ILIAS is licensed with the GPL-3.0,
+ * see https://www.gnu.org/licenses/gpl-3.0.en.html
+ * You should have received a copy of said license along with the
+ * source code, too.
+ *
+ * If this is not the case or you just want to try ILIAS, you'll find
+ * us at:
+ * https://www.ilias.de
+ * https://github.com/ILIAS-eLearning
+ *
+ ********************************************************************
+ */
 
 include_once("./Services/Cron/classes/class.ilCronHookPlugin.php");
 
@@ -17,14 +33,12 @@ class ilCronStatusMonitorPlugin extends ilCronHookPlugin
     const PNAME = "CronStatusMonitor";
 
     /**
-     * Get singelton instance
-     * @return ilCronStatusMonitorPlugin
+     * Get singleton instance
      */
-    public static function getInstance()
+    public static function getInstance() : ilPlugin
     {
         global $ilPluginAdmin;
-        if(self::$instance)
-        {
+        if (self::$instance) {
             return self::$instance;
         }
         include_once "./Services/Component/classes/class.ilPluginAdmin.php";
@@ -36,19 +50,19 @@ class ilCronStatusMonitorPlugin extends ilCronHookPlugin
         );
     }
 
-    function getPluginName()
+    public function getPluginName() : string
     {
         return self::PNAME;
     }
 
-    function getCronJobInstances()
+    public function getCronJobInstances() : array
     {
         include_once "class.ilCronStatusMonitorCronJob.php";
         $job = new ilCronStatusMonitorCronJob($this);
         return array($job);
     }
 
-    function getCronJobInstance($a_job_id)
+    public function getCronJobInstance($a_job_id) : ilCronStatusMonitorCronJob
     {
         include_once "class.ilCronStatusMonitorCronJob.php";
         return new ilCronStatusMonitorCronJob($this);
@@ -57,7 +71,7 @@ class ilCronStatusMonitorPlugin extends ilCronHookPlugin
     /**
      * Delete the database tables, which were created for the plugin, when the plugin became uninstalled
      */
-    function afterUninstall()
+    protected function afterUninstall() : void
     {
         global $ilDB;
 
@@ -70,5 +84,3 @@ class ilCronStatusMonitorPlugin extends ilCronHookPlugin
         }
     }
 }
-
-?>
