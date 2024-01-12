@@ -92,7 +92,7 @@ class ilCronStatusMonitorCronJob extends ilCronJob
     /**
      * @return array|void
      *
-     * Check cron-jobs, which crashed since the last run (or first run) of this cron-job
+     * Check cron-jobs, which crashed or failed since the last run (or first run) of this cron-job
      */
     public function checkCrashedCronJobs()
     {
@@ -101,7 +101,7 @@ class ilCronStatusMonitorCronJob extends ilCronJob
         $old_crashed_jobs = array();
         $new_crashed_jobs = array();
 
-        // Get cron-jobs, which had the status "crashed" on the last run of this cron-job (empty result on first run)
+        // Get cron-jobs, which had the status "crashed" or "failed" on the last run of this cron-job (empty result on first run)
         $result = $ilDB->query("SELECT job_id, ts FROM crn_sts_mtr");
         if ($ilDB->numRows($result) > 0) {
             while ($row = $ilDB->fetchAssoc($result)) {
@@ -109,18 +109,18 @@ class ilCronStatusMonitorCronJob extends ilCronJob
             }
         }
 
-        // Get cron-jobs, which have the status "crashed" on the current run of this cron-job
+        // Get cron-jobs, which have the status "crashed" or "failed" on the current run of this cron-job
         $result = $ilDB->queryF(
-            "SELECT job_id, job_result_status, job_result_ts FROM cron_job WHERE job_result_status = %s",
-            array("integer"),
-            array(4)
+            "SELECT job_id, job_result_status, job_result_ts FROM cron_job WHERE job_result_status IN (%s, %s)",
+            array("integer", "integer"),
+            array(ilCronJobResult::STATUS_CRASHED, ilCronJobResult::STATUS_FAILED)
         );
         if ($ilDB->numRows($result) > 0) {
             while ($row = $ilDB->fetchAssoc($result)) {
                 $new_crashed_jobs[$row["job_id"]] = $row["job_result_ts"];
             }
         } else {
-            // No further processing if no cron-jobs have the status "crashed"
+            // No further processing if no cron-jobs have the status "crashed" or "failed"
             $ilDB->manipulate("DELETE FROM crn_sts_mtr");
             return;
         }
