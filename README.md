@@ -2,9 +2,9 @@
 
 CronStatusMonitor is a cron-job plugin to identify if active cron-jobs crashed and informs selected users about them by mail.
 
-**Minimum ILIAS Version:** 8.0
+**Minimum ILIAS Version:** 9.0
 
-**Maximum ILIAS Version:** 8.999
+**Maximum ILIAS Version:** 9.999
 
 **Responsible Developer:** Thomas Famula - famula AT leifos.com
 
