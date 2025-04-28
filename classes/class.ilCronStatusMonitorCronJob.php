@@ -17,6 +17,7 @@
  ********************************************************************
  */
 
+use ILIAS\Cron\Schedule\CronJobScheduleType as CronJobScheduleType;
 
 /**
  * @ilCtrl_isCalledBy ilCronStatusMonitorCronJob: ilObjComponentSettingsGUI
@@ -58,9 +59,9 @@ class ilCronStatusMonitorCronJob extends ilCronJob
         return true;
     }
 
-    public function getDefaultScheduleType() : int
+    public function getDefaultScheduleType() : CronJobScheduleType
     {
-        return self::SCHEDULE_TYPE_IN_HOURS;
+        return CronJobScheduleType::SCHEDULE_TYPE_IN_HOURS;
     }
 
     public function getDefaultScheduleValue() : int
