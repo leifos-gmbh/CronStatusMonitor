@@ -113,7 +113,7 @@ class ilCronStatusMonitorCronJob extends ilCronJob
         $result = $ilDB->queryF(
             "SELECT job_id, job_result_status, job_result_ts FROM cron_job WHERE job_result_status IN (%s, %s)",
             array("integer", "integer"),
-            array(ilCronJobResult::STATUS_CRASHED, ilCronJobResult::STATUS_FAILED)
+            array(ilCronJobResult::STATUS_CRASHED, ilCronJobResult::STATUS_FAIL)
         );
         if ($ilDB->numRows($result) > 0) {
             while ($row = $ilDB->fetchAssoc($result)) {
