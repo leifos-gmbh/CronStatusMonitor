@@ -1,6 +1,9 @@
-cron_description#:#Checks if a cron job crashed and sends a mail to the selected users with this information
+cron_title#:#Cron Status Monitor
+cron_description#:#Checks if a cron job has crashed, and sends a mail to the selected users with this information.
 gui_title#:#Settings
-email_recipient#:#Recipients of the message
-email_recipient_info#:#Comma separated list of account logins
-email_message#:#The following cron-jobs crashed
-email_subject#:#Information on crashed cron-jobs
+email_recipient#:#Recipients
+email_recipient_info#:#Comma separated list of email addresses
+email_recipient_error#:#Either this list is not comma separated, or it contains an invalid address.
+email_message#:#The following ILIAS cron jobs have reported an error status:
+email_subject#:#Information on crashed cron jobs
+email_job_status#:#%1$s: %2$s at %3$s

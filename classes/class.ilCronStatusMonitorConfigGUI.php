@@ -17,80 +17,82 @@
  ********************************************************************
  */
 
+declare(strict_types=1);
+
+use Leifos\CronStatusMonitor\Settings\FormFactory;
+use Leifos\CronStatusMonitor\Settings\Settings;
+use ILIAS\UI\Renderer as UIRenderer;
+use ILIAS\UI\Component\Input\Container\Form\Standard as UIForm;
+use ILIAS\Http\Services as Http;
 
 /**
  * @ilCtrl_isCalledBy ilCronStatusMonitorConfigGUI: ilObjComponentSettingsGUI
  *
- * Class ilCronStatusMonitorConfigGUI
  * @author Thomas Famula <famula@leifos.de>
  */
 class ilCronStatusMonitorConfigGUI extends ilPluginConfigGUI
 {
-    protected ilGlobalTemplateInterface $tpl;
     protected ilCtrl $ctrl;
+    protected Http $http;
+    protected ilGlobalTemplateInterface $tpl;
+    protected UIRenderer $ui_renderer;
     protected ilLanguage $lng;
+    protected FormFactory $form_factory;
 
     public function __construct()
     {
         global $DIC;
-        $this->tpl = $DIC->ui()->mainTemplate();
+
         $this->ctrl = $DIC->ctrl();
+        $this->http = $DIC->http();
+        $this->tpl = $DIC->ui()->mainTemplate();
+        $this->ui_renderer = $DIC->ui()->renderer();
         $this->lng = $DIC->language();
     }
 
-    /**
-     * @param string $cmd
-     *
-     * Handles all commands, default is "configure"
-     */
-    public function performCommand(string $cmd) : void
+    // Needs lazy init, plugin isn't set in the constructor.
+    protected function getFormFactory(): FormFactory
+    {
+        global $DIC;
+
+        return $this->form_factory ??= new FormFactory(
+            $DIC->ui()->factory(),
+            $DIC->refinery(),
+            $this->plugin_object,
+            new Settings($DIC->database())
+        );
+    }
+
+    public function performCommand(string $cmd): void
     {
         switch ($cmd) {
+            case 'save':
+                $this->save();
+                break;
+
+            case 'configure':
             default:
-                $this->$cmd();
+                $this->configure();
                 break;
         }
     }
 
-    /**
-     * Show settings screen
-     */
-    public function configure(?ilPropertyFormGUI $form = null) : void
+    protected function buildForm(): UIForm
     {
-        global $tpl;
-        if (!$form instanceof ilPropertyFormGUI) {
-            $form = $this->initConfigurationForm();
-        }
-        $tpl->setContent($form->getHTML());
+        $action = $this->ctrl->getLinkTarget($this, "save");
+        return $this->getFormFactory()->get($action);
     }
 
-    public function initConfigurationForm() : ilPropertyFormGUI
+    public function configure(): void
     {
-        //create the form
-        $form = new ilPropertyFormGUI();
-        $form->setFormAction($this->ctrl->getFormAction($this));
-        $form->setTitle($this->getPluginObject()->txt("gui_title"));
-
-        //add button
-        $form->addCommandButton("save", $this->lng->txt("save"));
-
-        //text input
-        $setting = new ilCronStatusMonitorSettings();
-        $text = new ilTextInputGUI($this->getPluginObject()->txt("email_recipient"), "email_recipient");
-        $text->setValue($setting->get("email_recipient"));
-        $text->setInfo($this->getPluginObject()->txt("email_recipient_info"));
-        $text->setRequired(true);
-        $form->addItem($text);
-
-        return $form;
+        $form = $this->buildForm();
+        $this->tpl->setContent($this->ui_renderer->render($form));
     }
 
-    public function save() : void
+    public function save(): void
     {
-        $form = $this->initConfigurationForm();
-        if ($form->checkInput()) {
-            $setting = new ilCronStatusMonitorSettings();
-            $setting->setList($form->getInput("email_recipient"));
+        $form = $this->buildForm()->withRequest($this->http->request());
+        if ($form->getData()) {
             $this->tpl->setOnScreenMessage(
                 ilGlobalTemplateInterface::MESSAGE_TYPE_SUCCESS,
                 $this->lng->txt("settings_saved"),
@@ -98,6 +100,6 @@ class ilCronStatusMonitorConfigGUI extends ilPluginConfigGUI
             );
             $this->ctrl->redirect($this, "configure");
         }
-        $this->configure($form);
+        $this->tpl->setContent($this->ui_renderer->render($form));
     }
 }

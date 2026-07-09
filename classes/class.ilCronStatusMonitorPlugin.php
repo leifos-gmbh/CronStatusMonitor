@@ -17,60 +17,61 @@
  ********************************************************************
  */
 
+declare(strict_types=1);
+
+use Leifos\CronStatusMonitor\Job\CronJob;
+use Leifos\CronStatusMonitor\Job\PreviousResults\Repository as PreviousResultsRepository;
+use Leifos\CronStatusMonitor\Settings\Settings;
+use Leifos\CronStatusMonitor\Job\Notification\Handler as NotificationHandler;
+use Leifos\CronStatusMonitor\Job\Notification\Writer as NotificationWriter;
 
 /**
- * Class ilCronStatusMonitorPlugin
  * @author Thomas Famula <famula@leifos.de>
  */
 class ilCronStatusMonitorPlugin extends ilCronHookPlugin
 {
-    private static ?ilCronStatusMonitorPlugin $instance = null;
+    protected const PNAME = "CronStatusMonitor";
+    protected const PLUGIN_ID = "cronstatusmonitor";
 
-    const PNAME = "CronStatusMonitor";
-    const PLUGIN_ID = "cronstatusmonitor";
-
-    public static function getInstance(): ilCronStatusMonitorPlugin
-    {
-        global $DIC;
-        if (isset(self::$instance)) {
-            return self::$instance;
-        }
-        /** @var ilComponentFactory $component_factory */
-        $component_factory = $DIC["component.factory"];
-        /** @var ilCronStatusMonitorPlugin $plugin */
-        $plugin = $component_factory->getPlugin(self::PLUGIN_ID);
-        return $plugin;
-    }
-
-    public function getPluginName() : string
+    public function getPluginName(): string
     {
         return self::PNAME;
     }
 
-    public function getCronJobInstances() : array
+    public function getCronJobInstances(): array
     {
-        $job = new ilCronStatusMonitorCronJob($this);
-        return array($job);
+        return [$this->getCronJob()];
     }
 
-    public function getCronJobInstance(string $jobId) : ilCronStatusMonitorCronJob
+    public function getCronJobInstance(string $jobId): CronJob
     {
-        return new ilCronStatusMonitorCronJob($this);
+        return $this->getCronJob();
     }
 
-    /**
-     * Delete the database tables, which were created for the plugin, when the plugin became uninstalled
-     */
-    protected function afterUninstall() : void
+    protected function getCronJob(): CronJob
     {
-        global $ilDB;
+        global $DIC;
 
-        if ($ilDB->tableExists('crn_sts_mtr')) {
-            $ilDB->dropTable("crn_sts_mtr");
+        $lng = $DIC->language();
+        $lng->loadLanguageModule('cron');
+
+        return new CronJob(
+            $DIC->cron()->repository(),
+            $this,
+            new PreviousResultsRepository($DIC->database()),
+            new Settings($DIC->database()),
+            new NotificationHandler(new NotificationWriter($this, $lng))
+        );
+    }
+
+    protected function afterUninstall(): void
+    {
+        if ($this->db->tableExists('crn_sts_mtr')) {
+            $this->db->dropTable("crn_sts_mtr");
         }
 
-        if ($ilDB->tableExists('crn_sts_mtr_settings')) {
-            $ilDB->dropTable("crn_sts_mtr_settings");
+        if ($this->db->tableExists('crn_sts_mtr_settings')) {
+            $this->db->dropTable("crn_sts_mtr_settings");
         }
     }
 }

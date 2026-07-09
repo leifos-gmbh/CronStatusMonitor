@@ -2,32 +2,40 @@
 
 CronStatusMonitor is a cron-job plugin to identify if active cron-jobs crashed and informs selected users about them by mail.
 
-**Minimum ILIAS Version:** 9.0
+**Minimum ILIAS Version:** 10.0
 
-**Maximum ILIAS Version:** 9.999
+**Maximum ILIAS Version:** 10.999
 
 **Responsible Developer:** Thomas Famula - famula AT leifos.com
 
 **Supported Languages:** German, English
 
+### Change Notes
+
+With the upgrade to ILIAS 10, CronStatusMonitor will
+send notifications as external mails only. Because of
+this, ILIAS logins are not accepted as recipients
+anymore. Existing configuration is reset, recipients
+have to be re-added.
+
 
 ### Quick Installation Guide
 
-1. Copy the content of this folder in <ILIAS_directory>/Customizing/global/plugins/Services/Cron/CronHook/CronStatusMonitor
+1. Copy the content of this folder in <ILIAS_directory>/public/Customizing/global/plugins/Services/Cron/CronHook/CronStatusMonitor
 
 2. Access to ILIAS and go to *Administration > Extending ILIAS > Plugins* in the Mainbar.
 
-3. Look for the CronStatusMonitor plugin in the table and hit the "Actions" dropdown and select "Install".
+3. Look for the CronStatusMonitor plugin in the list and select "Install" in the "Actions" dropdown.
 
-4. When ILIAS has installed the plugin, hit the "Actions" dropdown again and select "Activate".
+4. When ILIAS has installed the plugin, select "Install" in the "Actions" dropdown.
 
-5. Hit the "Actions" dropdown and select "Refresh Languages" to update the language files.
+5. "Refresh Languages" in the "Actions" dropdown to update the language files.
 
-6. Hit the "Actions" dropdown and select "Configure" to set the users which will receive messages about crashed cron-jobs. Hit the "Save" button.
+6. Select "Configure" in the "Actions" dropdown to set the users which will receive messages about crashed cron-jobs. Hit the "Save" button.
 
 7. Go to *Administration > System Settings and Maintenance > General Settings* in the Mainbar.
 
-8. Hit the "Cron Jobs" tab.
+8. Go to the "Cron Jobs" tab.
 
 9. Look for the CronStatusMonitor cron-job and select "Activate".
 

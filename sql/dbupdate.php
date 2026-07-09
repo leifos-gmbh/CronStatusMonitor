@@ -38,3 +38,12 @@ if (!$ilDB->tableExists('crn_sts_mtr_settings')) {
 }
 
 ?>
+
+<#3>
+<?php
+
+if ($ilDB->tableExists('crn_sts_mtr_settings')) {
+    $ilDB->manipulate("DELETE FROM crn_sts_mtr_settings WHERE keyword = 'email_recipient'");
+}
+
+?>

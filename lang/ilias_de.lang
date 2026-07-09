@@ -1,6 +1,9 @@
-cron_description#:#Prüft ob ein Cron Job abgestürzt ist und informiert die ausgewählten Benutzer darüber per Mail
+cron_title#:#Cron Status Monitor
+cron_description#:#Prüft ob ein Cron-Job abgestürzt ist, und informiert die ausgewählten Benutzer darüber per Mail.
 gui_title#:#Einstellungen
-email_recipient#:#Empfänger der Nachricht
-email_recipient_info#:#Komma-separierte Liste von Benutzeraccounts
-email_message#:#Folgende Cron-Jobs sind abgestürzt
+email_recipient#:#Empfänger
+email_recipient_info#:#Komma-separierte Liste von E-Mail-Adressen
+email_recipient_error#:#Diese Liste ist entweder nicht komma-separiert, oder enthält eine ungültige Adresse.
+email_message#:#Folgende ILIAS Cron-Jobs haben einen fehlerhaften Status gemeldet:
 email_subject#:#Information über abgestürzte Cron-Jobs
+email_job_status#:#%1$s: %2$s am %3$s
