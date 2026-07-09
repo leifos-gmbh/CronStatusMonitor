@@ -1,6 +1,8 @@
 # CronStatusMonitor
 
-CronStatusMonitor is a cron-job plugin to identify if active cron-jobs crashed and informs selected users about them by mail.
+CronStatusMonitor is a cron job plugin that sends out
+mail notifications when cron jobs in ILIAS crash, or
+otherwise report an error status.
 
 **Minimum ILIAS Version:** 10.0
 
@@ -12,11 +14,14 @@ CronStatusMonitor is a cron-job plugin to identify if active cron-jobs crashed a
 
 ### Change Notes
 
-With the upgrade to ILIAS 10, CronStatusMonitor will
-send notifications as external mails only. Because of
-this, ILIAS logins are not accepted as recipients
-anymore. Existing configuration is reset, recipients
-have to be re-added.
+- With the upgrade to ILIAS 10, CronStatusMonitor will
+  send notifications as external mails only. Because of
+  this, ILIAS logins are not accepted as recipients
+  anymore. Existing configuration is reset, recipients
+  have to be re-added.
+- Notifications will now also be sent for cron jobs
+  with status 'Failed' and 'Invalid Configuration', not
+  only 'Crashed'.
 
 
 ### Quick Installation Guide
